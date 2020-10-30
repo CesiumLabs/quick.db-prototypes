@@ -1,4 +1,7 @@
-const _ = require("lodash");
+const startsWith = require("./prototypes/startsWith");
+const pull = require("./prototypes/pull");
+const setMany = require("./prototypes/setMany");
+const deleteAll = require("./prototypes/deleteAll");
 
 /**
  * Quick.db prototypes
@@ -6,32 +9,17 @@ const _ = require("lodash");
  */
 module.exports = (db) => {
     if (!db) throw new Error("missing quick.db");
-    
-    db.startsWith = function (key, ops = {}) {
-        if (!key || typeof key !== "string") return [];
-        const data = db.all(ops);
-        let arb = data.filter(i => i.ID.startsWith(key)).map(m => ({ ID: m.ID, data: !isNaN(m.data) ? parseInt(m.data) : m.data }));
-        if (ops && ops.sort && typeof ops.sort === 'string') {
-            if (ops.sort.startsWith('.')) ops.sort = ops.sort.slice(1);
-            ops.sort = ops.sort.split('.');
-            arb = _.sortBy(arb, ops.sort).reverse();
-        }
 
-        return typeof ops.limit !== "number" || ops.limit <= 0 ? arb : arb.slice(0, ops.limit);
-    }
-
-    db.table.prototype.startsWith = function (key, ops = {}) {
-        if (!key || typeof key !== "string") return [];
-        const data = this.all(ops);
-        let arb = data.filter(i => i.ID.startsWith(key)).map(m => ({ ID: m.ID, data: !isNaN(m.data) ? parseInt(m.data) : m.data }));
-        if (ops && ops.sort && typeof ops.sort === 'string') {
-            if (ops.sort.startsWith('.')) ops.sort = ops.sort.slice(1);
-            ops.sort = ops.sort.split('.');
-            arb = _.sortBy(arb, ops.sort).reverse();
-        }
-
-        return typeof ops.limit !== "number" || ops.limit <= 0 ? arb : arb.slice(0, ops.limit);
-    }
+    // prototypes
+    startsWith(db);
+    pull(db);
+    setMany(db);
+    deleteAll(db);
 
     return db;
-}
+};
+
+module.exports.startsWith       =     startsWith;
+module.exports.pull             =     pull;
+module.exports.setMany          =     setMany;
+module.exports.deleteAll        =     deleteAll;

@@ -12,6 +12,11 @@ declare module 'quick.db' {
 
     export type ValueData = string | object | number | null | boolean | bigint | symbol | any[];
 
+    export interface Many {
+        key: string;
+        value: ValueData;
+    }
+
     /**
      * Package version. Community requested feature.
      * ```
@@ -44,6 +49,13 @@ declare module 'quick.db' {
     function set(key: string, value: ValueData, ops?: Options): any;
 
     /**
+     * This method inserts multiple data at once
+     * @param items Items to insert
+     * @param ops Any options to be added to the request.
+     */
+    function setMany(items: Many[], ops?: Options): Many[];
+
+    /**
      * This function adds a number to a key in the database. (If no existing number, it will add to 0)
      * @param key Any string as a key. Also allows for dot notation following the key.
      * @param value Any numerical value.
@@ -66,6 +78,14 @@ declare module 'quick.db' {
      * @param ops Any options to be added to the request.
      */
     function push(key: string, value: ValueData, ops?: Options): any[];
+
+    /**
+     * This function will pull all matching data from the Array.
+     * @param key Any string as a key. Also allows for dot notation following the key.
+     * @param value Any data to pull.
+     * @param ops Any options to be added to the request.
+     */
+    function pull(key: string, value: ValueData, ops?: Options): any[];
 
     /**
      * This function returns a boolean indicating whether an element with the specified key exists or not.
@@ -92,6 +112,13 @@ declare module 'quick.db' {
      * @param ops Any options to be added to the request.
      */
     function fetchAll(ops?: Options): { ID: string; data: any; }[];
+
+    /**
+     * This method deletes entire table or specific keys
+     * @param key Key to remove (optional)
+     * @param ops Any options to be added to the request
+     */
+    function deleteAll(key?: string, ops?: Options): boolean;
 
     /**
      * This method can be used to get array of data with the keys that start with the given key.
@@ -133,6 +160,13 @@ declare module 'quick.db' {
         public set(key: string, value: ValueData, ops?: Options): any;
 
         /**
+         * This method inserts multiple data at once
+         * @param items Items to insert
+         * @param ops Any options to be added to the request.
+         */
+        public setMany(items: Many[], ops?: Options): Many[];
+
+        /**
          * This function fetches data from a key in the database.
          * @param key Any string as a key. Also allows for dot notation following the key.
          * @param ops Any options to be added to the request.
@@ -171,6 +205,14 @@ declare module 'quick.db' {
         public push(key: string, value: ValueData, ops?: Options): any[];
 
         /**
+         * This function will pull all matching data from the Array.
+         * @param key Any string as a key. Also allows for dot notation following the key.
+         * @param value Any data to pull.
+         * @param ops Any options to be added to the request.
+         */
+        public pull(key: string, value: ValueData, ops?: Options): any[];
+
+        /**
          * This function returns a boolean indicating whether an element with the specified key exists or not.
          * @param key Any string as a key. Also allows for dot notation following the key, this will return if the prop exists or not.
          * @param ops Any options to be added to the request.
@@ -197,6 +239,13 @@ declare module 'quick.db' {
         public fetchAll(ops?: Options): { ID: string; data: any }[];
 
         /**
+         * This method deletes entire table or specific keys
+         * @param key Key to remove (optional)
+         * @param ops Any options to be added to the request
+         */
+        public deleteAll(key?: string, ops?: Options): boolean;
+
+        /**
          * This method can be used to get array of data with the keys that start with the given key.
          * @param key Any string as a key. Also allows for dot notation following the key, this will return if the prop exists or not.
          * @param ops Any options to be added to the request.
@@ -215,13 +264,16 @@ declare module 'quick.db' {
         fetch,
         get,
         set,
+        setMany,
         add,
         subtract,
         push,
+        pull,
         has,
         includes,
         all,
         fetchAll,
+        deleteAll,
         startsWith,
         del as delete,
         dataType as type,
